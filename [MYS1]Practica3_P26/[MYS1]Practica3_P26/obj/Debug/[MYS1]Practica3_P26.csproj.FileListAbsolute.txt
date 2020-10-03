@@ -1,0 +1,12 @@
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\bin\Debug\[MYS1]Practica3_P26.exe.config
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\bin\Debug\[MYS1]Practica3_P26.exe
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\bin\Debug\[MYS1]Practica3_P26.pdb
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\[MYS1]Practica3_P26.csprojAssemblyReference.cache
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\_MYS1_Practica3_P26.Properties.Resources.resources
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\[MYS1]Practica3_P26.csproj.GenerateResource.cache
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\[MYS1]Practica3_P26.csproj.CoreCompileInputs.cache
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\[MYS1]Practica3_P26.exe
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\[MYS1]Practica3_P26.pdb
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\bin\Debug\Newtonsoft.Json.dll
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\_MYS1_Practica3_P26.Form1.resources
+C:\Users\melyza\Documents\MYS1\-MYS1-Practica3_P26\[MYS1]Practica3_P26\[MYS1]Practica3_P26\obj\Debug\[MYS1]Practica3_P26.csproj.CopyComplete
