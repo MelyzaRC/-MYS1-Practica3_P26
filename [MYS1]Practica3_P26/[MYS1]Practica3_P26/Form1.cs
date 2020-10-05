@@ -12,7 +12,7 @@ using SimioAPI.Extensions;
 using SimioAPI.Graphics;
 using Simio;
 using Simio.SimioEnums;
-
+using System.Net.Sockets;
 
 
 namespace _MYS1_Practica3_P26
@@ -28,9 +28,9 @@ namespace _MYS1_Practica3_P26
 
         public Form1()
         {
+            
             _ProyectoSimio = SimioProjectFactory.LoadProject(_rutaproyecto, out warnings);
-            model = _ProyectoSimio.Models["Model"];
-            //model = _ProyectoSimio.Models[1];
+            model = _ProyectoSimio.Models[1];
             intelligentObjects = model.Facility.IntelligentObjects;
             InitializeComponent();
         }
@@ -62,12 +62,13 @@ namespace _MYS1_Practica3_P26
                 try
                 {
                     SimioProjectFactory.SaveProject(_ProyectoSimio, "ModeloModificado.spfx", out warnings);
+                    MessageBox.Show("Finalizo guardado");
                 }
                 catch (Exception er)
                 {
                     MessageBox.Show("Error: " + er.Message);
                 }
-                MessageBox.Show("Finalizo guardado");
+                
                 //Console.WriteLine("Finalizo guardado");
             }
             catch (ArgumentOutOfRangeException outOfRange)
