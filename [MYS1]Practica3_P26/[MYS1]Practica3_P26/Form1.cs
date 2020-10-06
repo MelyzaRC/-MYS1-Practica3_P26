@@ -77,5 +77,167 @@ namespace _MYS1_Practica3_P26
                 //Console.WriteLine("Error al crear elementos");
             }
         }
+
+        public void crearRegiones() {
+            crearRegion("metropolitana", 0, 0, "200", "Random.Poisson(2)", "minutos", "Random.Exponential(4)");
+            crearRegion("norte", -20, 5, "50", "Random.Poisson(8)", "minutos","Random.Exponential(5)");
+            crearRegion("nororiente", -10, 30, "40", "Random.Poisson(6)", "minutos","Random.Exponential(3)");
+            crearRegion("suroriente", 20, 15, "30", "Random.Poisson(10)", "minutos", "Random.Exponential(4)");
+            crearRegion("central", 20, -15, "100", "Random.Poisson(3)", "minutos", "Random.Exponential(5)");
+            crearRegion("suroccidente", 10, -40, "120", "Random.Poisson(4)", "minutos", "Random.Exponential(3)");
+            crearRegion("noroccidente", -20, -40, "30", "Random.Poisson(12)", "minutos", "Random.Exponential(6)");
+            crearRegion("peten", -50, 10, "150", "Random.Poisson(4)", "minutos", "Random.Exponential(4)");
+        }
+
+        public void crearRegion(string nombre, long longitud_, long latitud_, string capacidad_, string tiempoLlegada_, string unidadTiempo, string tiempoAtencion_)
+        {
+            //conversion de coordenadas
+            longitud_ = longitud_*84190;
+            latitud_ = latitud_*89186;
+            //Server que simula la estacion de servicio ubicada en cada region 
+            IFixedObject estacion = model.Facility.IntelligentObjects.CreateObject("Server", new FacilityLocation(latitud_, 0, longitud_)) as IFixedObject;
+            estacion.ObjectName = "region" + nombre.ToUpper();
+            model.Facility.IntelligentObjects["region" + nombre.ToUpper()].Properties["ProcessingTime"].Value = tiempoAtencion_;
+            model.Facility.IntelligentObjects["region" + nombre.ToUpper()].Properties["InputBufferCapacity"].Value = capacidad_;
+            model.Facility.IntelligentObjects["output@region" + nombre.ToUpper()].Properties["OutboundLinkRule"].Value = "ByLinkWeight";
+            //Source que genera turistas 
+            IFixedObject turistas = model.Facility.IntelligentObjects.CreateObject("Source", new FacilityLocation(latitud_ - 6, 0, longitud_)) as IFixedObject;
+            turistas.ObjectName = "turistas" + nombre.ToUpper();
+            model.Facility.IntelligentObjects["turistas" + nombre.ToUpper()].Properties["InterarrivalTime"].Value = tiempoLlegada_;
+            //Nodo
+            INodeObject union = model.Facility.IntelligentObjects.CreateObject("BasicNode", new FacilityLocation(latitud_ - 3, 0, longitud_)) as INodeObject;
+            union.ObjectName = "union" + nombre.ToUpper();
+            //Enlace entre source y node 
+            ILinkObject path1 = model.Facility.IntelligentObjects.CreateLink("Path", turistas.Nodes[0], union, null) as ILinkObject;
+            path1.ObjectName = "path1" + nombre.ToUpper();
+            //Enlace entre node y server 
+            ILinkObject path2 = model.Facility.IntelligentObjects.CreateLink("Path", union, estacion.Nodes[0], null) as ILinkObject;
+            path2.ObjectName = "path2" + nombre.ToUpper();
+        }
+
+        public void crearEnlaces() {
+            crearEnlace(1, 1, "0.35", "0");
+            crearEnlace(1, 5, "0.30", "63000");
+            crearEnlace(1, 4, "0.15", "124000");
+            crearEnlace(1, 3, "0.20", "241000");
+
+            crearEnlace(2,2,"0.40","0");
+            crearEnlace(2,8,"0.40","147000");
+            crearEnlace(2,3,"0.10","138000");
+            crearEnlace(2,7,"0.10","145000");
+
+            crearEnlace(3,3,"0.20","0");
+            crearEnlace(3,1,"0.30","241000");
+            crearEnlace(3,2,"0.15","138000");
+            crearEnlace(3,4,"0.05","231000");
+            crearEnlace(3,8,"0.30","282000");
+
+            crearEnlace(4,4,"0.40","0");
+            crearEnlace(4,3,"0.20", "231000");
+            crearEnlace(4,1,"0.25", "124000");
+            crearEnlace(4,5, "0.15", "154000");
+
+            crearEnlace(5,5, "0.35", "0");
+            crearEnlace(5,1, "0.35", "63000");
+            crearEnlace(5,4, "0.05", "154000");
+            crearEnlace(5,6, "0.15", "155000");
+            crearEnlace(5,7, "0.10", "269000");
+
+            crearEnlace(6,6, "0.35", "0");
+            crearEnlace(6,7, "0.30", "87000");
+            crearEnlace(6,5, "0.35", "155000");
+
+            crearEnlace(7,7, "0.40", "0");
+            crearEnlace(7,6, "0.30", "87000");
+            crearEnlace(7,5, "0.10", "269000");
+            crearEnlace(7,2, "0.20", "145000");
+
+            crearEnlace(8,8, "0.5", "0");
+            crearEnlace(8,2, "0.25", "147000");
+            crearEnlace(8,3, "0.25", "282000");
+        }
+
+        public void crearEnlace(int origen, int destino, string probabilidad, string distancia)
+        {
+            string cadenaOrigen = "output@region", cadenaDestino = "union", nombreEnlace = "";
+            switch (origen)
+            {
+                case 1://metropolitana
+                    cadenaOrigen = cadenaOrigen + "METROPOLITANA";
+                    nombreEnlace = nombreEnlace + "METROPOLITANA";
+                    break;
+                case 2://norte
+                    cadenaOrigen = cadenaOrigen + "NORTE";
+                    nombreEnlace = nombreEnlace + "NORTE";
+                    break;
+                case 3://nororiente
+                    cadenaOrigen = cadenaOrigen + "NORORIENTE";
+                    nombreEnlace = nombreEnlace + "NORORIENTE";
+                    break;
+                case 4://suroriente
+                    cadenaOrigen = cadenaOrigen + "SURORIENTE";
+                    nombreEnlace = nombreEnlace + "SURORIENTE";
+                    break;
+                case 5://central
+                    cadenaOrigen = cadenaOrigen + "CENTRAL";
+                    nombreEnlace = nombreEnlace + "CENTRAL";
+                    break;
+                case 6://suroccidente
+                    cadenaOrigen = cadenaOrigen + "SUROCCIDENTE";
+                    nombreEnlace = nombreEnlace + "SUROCCIDENTE";
+                    break;
+                case 7://noroccidente
+                    cadenaOrigen = cadenaOrigen + "NOROCCIDENTE";
+                    nombreEnlace = nombreEnlace + "NOROCCIDENTE";
+                    break;
+                case 8://peten
+                    cadenaOrigen = cadenaOrigen + "PETEN";
+                    nombreEnlace = nombreEnlace + "PETEN";
+                    break;
+            }
+
+            nombreEnlace = nombreEnlace + "a";
+            switch (destino)
+            {
+                case 1://metropolitana
+                    cadenaDestino = cadenaDestino + "METROPOLITANA";
+                    nombreEnlace = nombreEnlace + "METROPOLITANA";
+                    break;
+                case 2://norte
+                    cadenaDestino = cadenaDestino + "NORTE";
+                    nombreEnlace = nombreEnlace + "NORTE";
+                    break;
+                case 3://nororiente
+                    cadenaDestino = cadenaDestino + "NORORIENTE";
+                    nombreEnlace = nombreEnlace + "NORORIENTE";
+                    break;
+                case 4://suroriente
+                    cadenaDestino = cadenaDestino + "SURORIENTE";
+                    nombreEnlace = nombreEnlace + "SURORIENTE";
+                    break;
+                case 5://central
+                    cadenaDestino = cadenaDestino + "CENTRAL";
+                    nombreEnlace = nombreEnlace + "CENTRAL";
+                    break;
+                case 6://suroccidente
+                    cadenaDestino = cadenaDestino + "SUROCCIDENTE";
+                    nombreEnlace = nombreEnlace + "SUROCCIDENTE";
+                    break;
+                case 7://noroccidente
+                    cadenaDestino = cadenaDestino + "NOROCCIDENTE";
+                    nombreEnlace = nombreEnlace + "NOROCCIDENTE";
+                    break;
+                case 8://peten
+                    cadenaDestino = cadenaDestino + "PETEN";
+                    nombreEnlace = nombreEnlace + "PETEN";
+                    break;
+            }
+            ILinkObject camino = model.Facility.IntelligentObjects.CreateLink("Conveyor", (INodeObject)model.Facility.IntelligentObjects[cadenaOrigen], (INodeObject)model.Facility.IntelligentObjects[cadenaDestino], null) as ILinkObject;
+            camino.ObjectName = nombreEnlace;
+            camino.Properties["DrawnToScale"].Value = "False";
+            camino.Properties["LogicalLength"].Value = distancia;
+            camino.Properties["SelectionWeight"].Value = probabilidad;
+            camino.Properties["InitialDesiredSpeed"].Value = "19.4444444444";
+        }
     }
 }
