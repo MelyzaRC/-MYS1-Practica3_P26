@@ -59,6 +59,9 @@ namespace _MYS1_Practica3_P26
                 ContadorSink++;
                 ContadorPathSimple++;
                 ContadorPathSimple++;
+                crearRegiones();
+                crearEnlaces();
+                crearAeropuertos();
                 try
                 {
                     SimioProjectFactory.SaveProject(_ProyectoSimio, "ModeloModificado.spfx", out warnings);
@@ -89,30 +92,33 @@ namespace _MYS1_Practica3_P26
             crearRegion("peten", -50, 10, "150", "Random.Poisson(4)", "minutos", "Random.Exponential(4)");
         }
 
-        public void crearRegion(string nombre, long longitud_, long latitud_, string capacidad_, string tiempoLlegada_, string unidadTiempo, string tiempoAtencion_)
+        public void crearRegion(string nombre,  long latitud_,long longitud_, string capacidad_, string tiempoLlegada_, string unidadTiempo, string tiempoAtencion_)
         {
-            //conversion de coordenadas
-            longitud_ = longitud_*84190;
-            latitud_ = latitud_*89186;
             //Server que simula la estacion de servicio ubicada en cada region 
-            IFixedObject estacion = model.Facility.IntelligentObjects.CreateObject("Server", new FacilityLocation(latitud_, 0, longitud_)) as IFixedObject;
+            IFixedObject estacion = model.Facility.IntelligentObjects.CreateObject("Server", new FacilityLocation( longitud_, 0, latitud_)) as IFixedObject;
             estacion.ObjectName = "region" + nombre.ToUpper();
             model.Facility.IntelligentObjects["region" + nombre.ToUpper()].Properties["ProcessingTime"].Value = tiempoAtencion_;
             model.Facility.IntelligentObjects["region" + nombre.ToUpper()].Properties["InputBufferCapacity"].Value = capacidad_;
             model.Facility.IntelligentObjects["output@region" + nombre.ToUpper()].Properties["OutboundLinkRule"].Value = "ByLinkWeight";
             //Source que genera turistas 
-            IFixedObject turistas = model.Facility.IntelligentObjects.CreateObject("Source", new FacilityLocation(latitud_ - 6, 0, longitud_)) as IFixedObject;
+            IFixedObject turistas = model.Facility.IntelligentObjects.CreateObject("Source", new FacilityLocation(longitud_ - 6, 0, latitud_)) as IFixedObject;
             turistas.ObjectName = "turistas" + nombre.ToUpper();
             model.Facility.IntelligentObjects["turistas" + nombre.ToUpper()].Properties["InterarrivalTime"].Value = tiempoLlegada_;
             //Nodo
-            INodeObject union = model.Facility.IntelligentObjects.CreateObject("BasicNode", new FacilityLocation(latitud_ - 3, 0, longitud_)) as INodeObject;
+            INodeObject union = model.Facility.IntelligentObjects.CreateObject("BasicNode", new FacilityLocation(longitud_ - 3, 0, latitud_)) as INodeObject;
             union.ObjectName = "union" + nombre.ToUpper();
-            //Enlace entre source y node 
-            ILinkObject path1 = model.Facility.IntelligentObjects.CreateLink("Path", turistas.Nodes[0], union, null) as ILinkObject;
+            //Nodo Regreso 
+            INodeObject regreso = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(longitud_ - 3, 0, latitud_ - 3)) as INodeObject;
+            regreso.ObjectName = "regreso" + nombre.ToUpper();
+            //Enlace entre TransferNode y node 
+            ILinkObject path1 = model.Facility.IntelligentObjects.CreateLink("Path", regreso, union, null) as ILinkObject;
             path1.ObjectName = "path1" + nombre.ToUpper();
-            //Enlace entre node y server 
-            ILinkObject path2 = model.Facility.IntelligentObjects.CreateLink("Path", union, estacion.Nodes[0], null) as ILinkObject;
+            //Enlace entre source y node 
+            ILinkObject path2 = model.Facility.IntelligentObjects.CreateLink("Path", turistas.Nodes[0], union, null) as ILinkObject;
             path2.ObjectName = "path2" + nombre.ToUpper();
+            //Enlace entre node y server 
+            ILinkObject path3 = model.Facility.IntelligentObjects.CreateLink("Path", union, estacion.Nodes[0], null) as ILinkObject;
+            path3.ObjectName = "path3" + nombre.ToUpper();
         }
 
         public void crearEnlaces() {
@@ -159,7 +165,7 @@ namespace _MYS1_Practica3_P26
 
         public void crearEnlace(int origen, int destino, string probabilidad, string distancia)
         {
-            string cadenaOrigen = "output@region", cadenaDestino = "union", nombreEnlace = "";
+            string cadenaOrigen = "output@region", cadenaDestino = "regreso", nombreEnlace = "";
             switch (origen)
             {
                 case 1://metropolitana
@@ -238,6 +244,100 @@ namespace _MYS1_Practica3_P26
             camino.Properties["LogicalLength"].Value = distancia;
             camino.Properties["SelectionWeight"].Value = probabilidad;
             camino.Properties["InitialDesiredSpeed"].Value = "19.4444444444";
+        }
+
+        public void crearAeropuertos()
+        {
+            crearAeropuerto(1, "70", "Math.Round(Random.Exponential(35))");
+            crearAeropuerto(8, "40", "Math.Round(Random.Exponential(50))");
+            crearAeropuerto(7, "30", "Math.Round(Random.Exponential(70))");
+        }
+
+        public void crearAeropuerto(int region, string cantidadLlegada, string tiempoLlegada)
+        {
+            int longitud_ = 0;
+            int latitud_ = 0;
+            string nombreEntrada = "ae", nombreSalida = "as", union = "union", regreso = "regreso";
+
+            switch (region)
+            {
+                case 1://metropolitana
+                    nombreEntrada = nombreEntrada + "METROPOLITANA";
+                    nombreSalida = nombreSalida + "METROPOLITANA";
+                    union = union + "METROPOLITANA";
+                    regreso = regreso + "METROPOLITANA";
+                    break;
+                case 2://norte
+                    nombreEntrada = nombreEntrada + "NORTE";
+                    nombreSalida = nombreSalida + "NORTE";
+                    union = union + "NORTE";
+                    regreso = regreso + "NORTE";
+                    longitud_ = 5;
+                    latitud_ = -20;
+                    break;
+                case 3://nororiente
+                    nombreEntrada = nombreEntrada + "NORORIENTE";
+                    nombreSalida = nombreSalida + "NORORIENTE";
+                    union = union + "NORORIENTE";
+                    regreso = regreso + "NORORIENTE";
+                    longitud_ = 30;
+                    latitud_ = - 10;
+                    break;
+                case 4://suroriente
+                    nombreEntrada = nombreEntrada + "SURORIENTE";
+                    nombreSalida = nombreSalida + "SURORIENTE"; 
+                    union = union + "SURORIENTE";
+                    regreso = regreso + "SURORIENTE";
+                    longitud_ = 15;
+                    latitud_ = 20;
+                    break;
+                case 5://central
+                    nombreEntrada = nombreEntrada + "CENTRAL";
+                    nombreSalida = nombreSalida + "CENTRAL";
+                    union = union + "CENTRAL";
+                    regreso = regreso + "CENTRAL";
+                    longitud_ = - 15;
+                    latitud_ = 20;
+                    break;
+                case 6://suroccidente
+                    nombreEntrada = nombreEntrada + "SUROCCIDENTE";
+                    nombreSalida = nombreSalida + "SUROCCIDENTE";
+                    union = union + "SUROCCIDENTE";
+                    regreso = regreso + "SUROCCIDENTE";
+                    longitud_ = - 40;
+                    latitud_ = 10;
+                    break;
+                case 7://noroccidente
+                    nombreEntrada = nombreEntrada + "NOROCCIDENTE";
+                    nombreSalida = nombreSalida + "NOROCCIDENTE";
+                    union = union + "NOROCCIDENTE";
+                    regreso = regreso + "NOROCCIDENTE";
+                    longitud_ = - 40;
+                    latitud_ = - 20;
+                    break;
+                case 8://peten
+                    nombreEntrada = nombreEntrada + "PETEN";
+                    nombreSalida = nombreSalida + "PETEN";
+                    union = union + "PETEN";
+                    regreso = regreso + "PETEN";
+                    longitud_ = 10;
+                    latitud_ = -50;
+                    break;
+            }
+            //entrada de turistas por aeropuerto
+            IFixedObject entrada = model.Facility.IntelligentObjects.CreateObject("Source", new FacilityLocation(longitud_ - 6, 0, latitud_ - 2)) as IFixedObject;
+            entrada.ObjectName = nombreEntrada;
+            entrada.Properties["InterarrivalTime"].Value = tiempoLlegada;
+            entrada.Properties["EntitiesPerArrival"].Value = cantidadLlegada;
+            //union de entrada de aeropuerto hacia nodo de union 
+            intelligentObjects.CreateLink("Path", ((IFixedObject)model.Facility.IntelligentObjects[nombreEntrada]).Nodes[0], ((INodeObject)model.Facility.IntelligentObjects[union]), null);
+            ContadorPathSimple++;
+            //salida de turistas por aeropuerto
+            IFixedObject salida = model.Facility.IntelligentObjects.CreateObject("Sink", new FacilityLocation(longitud_ - 6, 0, latitud_ - 4)) as IFixedObject;
+            salida.ObjectName = nombreSalida;
+            //union de entrada de aeropuerto hacia nodo de union 
+            intelligentObjects.CreateLink("Path", (INodeObject)model.Facility.IntelligentObjects[regreso],salida.Nodes[0], null);
+            ContadorPathSimple++;
         }
     }
 }
