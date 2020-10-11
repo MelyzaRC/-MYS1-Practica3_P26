@@ -37,37 +37,41 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Simio.resources, Version=5.6.4.0, Culture=es, processorArchitecture=MSIL">
+    <Reference Include="QlmLicenseLib, Version=12.0.19294.2, Culture=neutral, PublicKeyToken=9c65e32c060523a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Simio.resources.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\QlmLicenseLib.dll</HintPath>
     </Reference>
-    <Reference Include="SimioAPI, Version=10.171.16722.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Simio.resources, Version=11.197.19514.0, Culture=es, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SimioAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\Simio.resources.dll</HintPath>
     </Reference>
-    <Reference Include="SimioAPI.Extensions, Version=10.171.16722.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SimioAPI, Version=11.197.19514.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SimioAPI.Extensions.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\SimioAPI.dll</HintPath>
     </Reference>
-    <Reference Include="SimioAPI.Graphics, Version=10.171.16722.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SimioAPI.Extensions, Version=11.197.19514.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SimioAPI.Graphics.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\SimioAPI.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="SimioDLL, Version=10.171.16722.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SimioAPI.Graphics, Version=11.197.19514.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SimioDLL.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\SimioAPI.Graphics.dll</HintPath>
     </Reference>
-    <Reference Include="SimioEnums, Version=10.171.16722.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SimioDLL, Version=11.197.19514.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SimioEnums.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\SimioDLL.dll</HintPath>
     </Reference>
-    <Reference Include="SimioReplicationRunnerContracts, Version=10.171.16722.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SimioEnums, Version=11.197.19514.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SimioReplicationRunnerContracts.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\SimioEnums.dll</HintPath>
     </Reference>
-    <Reference Include="SimioTypes, Version=10.171.16722.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SimioReplicationRunnerContracts, Version=11.197.19514.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SimioTypes.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\SimioReplicationRunnerContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="SimioTypes, Version=11.197.19514.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\DLL's\SimioTypes.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
