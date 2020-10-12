@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+    Practica No. 3 
+    Laboratorio de Modelación y Simulación 1 
+    Segundo Semestre 2020
+    Pareja No. 26
+    Ariel Bautista      2015093910
+    Melyza Rodriguez    201314821
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,7 +22,7 @@ using SimioAPI.Graphics;
 using Simio;
 using Simio.SimioEnums;
 using System.Net.Sockets;
-
+using SimioTypes;
 
 namespace _MYS1_Practica3_P26
 {
@@ -21,67 +30,56 @@ namespace _MYS1_Practica3_P26
     {
         static ISimioProject _ProyectoSimio;
         String _rutaproyecto = "[MYS1]ModeloBase_P26.spfx";
-        int ContadorPath = 1, ContadorServer = 1, ContadorSeparador = 1, ContadorSource = 1, ContadorSink = 1, ContadorPathSimple = 1;
+        int ContadorPathSimple = 1;
         String[] warnings;
         IModel model;
         IIntelligentObjects intelligentObjects;
 
         public Form1()
         {
-
             _ProyectoSimio = SimioProjectFactory.LoadProject(_rutaproyecto, out warnings);
             model = _ProyectoSimio.Models[1];
             intelligentObjects = model.Facility.IntelligentObjects;
             InitializeComponent();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                //Source 
-                intelligentObjects.CreateObject("Source", new FacilityLocation(5, 0, -5));
-                //Cambiar el interarrival time
-                model.Facility.IntelligentObjects["Source1"].Properties["InterarrivalTime"].Value = "1";
-                //Server
-                intelligentObjects.CreateObject("Server", new FacilityLocation(10, 0, 5));
-                //Cambiar processing time
-                model.Facility.IntelligentObjects["Server1"].Properties["ProcessingTime"].Value = "2";
-                //Sink
-                intelligentObjects.CreateObject("Sink", new FacilityLocation(15, 0, -5));
-                //Source a server
-                intelligentObjects.CreateLink("Path", ((IFixedObject)model.Facility.IntelligentObjects["Source1"]).Nodes[0], ((IFixedObject)model.Facility.IntelligentObjects["Server1"]).Nodes[0], null);
-                //Server a sink
-                intelligentObjects.CreateLink("Path", ((IFixedObject)model.Facility.IntelligentObjects["Server1"]).Nodes[1], ((IFixedObject)model.Facility.IntelligentObjects["Sink1"]).Nodes[0], null);
-                //Incrementar contadores
-                ContadorSource++;
-                ContadorServer++;
-                ContadorSink++;
-                ContadorPathSimple++;
-                ContadorPathSimple++;
+                //generarEntidades();
                 crearRegiones();
                 crearEnlaces();
                 crearAeropuertos();
-                //dibujarCarnets();
                 pintarMapa();
+                crearPuntosCardinales();
+                //dibujarCarnets();
+
                 try
                 {
-                    SimioProjectFactory.SaveProject(_ProyectoSimio, "ModeloModificado.spfx", out warnings);
-                    System.Diagnostics.Process.Start("ModeloModificado.spfx");
-                    MessageBox.Show("Finalizo guardado");
+                    SimioProjectFactory.SaveProject(_ProyectoSimio, "[MYS1]ModeloFinal.spfx", out warnings);
+                    //System.Diagnostics.Process.Start("ModeloModificado.spfx");
+                    MessageBox.Show("Modelo generado exitosamente!", "RESULTADO", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception er)
                 {
-                    MessageBox.Show("Error: " + er.Message);
+                    MessageBox.Show("Error: " + er.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
-                //Console.WriteLine("Finalizo guardado");
             }
-            catch (ArgumentOutOfRangeException outOfRange)
+            catch (Exception ex)
             {
-                MessageBox.Show("Error al crear " + outOfRange.Message);
-                //Console.WriteLine("Error al crear elementos");
+                MessageBox.Show("Error: " + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
 
         public void crearRegiones() {
@@ -95,7 +93,7 @@ namespace _MYS1_Practica3_P26
             crearRegion("peten", -50, 10, "150", "Random.Poisson(4)", "minutos", "Random.Exponential(4)");
         }
 
-        public void crearRegion(string nombre, long latitud_, long longitud_, string capacidad_, string tiempoLlegada_, string unidadTiempo, string tiempoAtencion_)
+        public void crearRegion(string nombre, int latitud_, int longitud_, string capacidad_, string tiempoLlegada_, string unidadTiempo, string tiempoAtencion_)
         {
             //Server que simula la estacion de servicio ubicada en cada region 
             IFixedObject estacion = model.Facility.IntelligentObjects.CreateObject("Server", new FacilityLocation(longitud_, 0, latitud_)) as IFixedObject;
@@ -106,6 +104,7 @@ namespace _MYS1_Practica3_P26
             //Source que genera turistas 
             IFixedObject turistas = model.Facility.IntelligentObjects.CreateObject("Source", new FacilityLocation(longitud_ - 6, 0, latitud_)) as IFixedObject;
             turistas.ObjectName = "turistas" + nombre.ToUpper();
+            model.Facility.IntelligentObjects["turistas" + nombre.ToUpper()].Properties["EntityType"].Value = "Turista1";
             model.Facility.IntelligentObjects["turistas" + nombre.ToUpper()].Properties["InterarrivalTime"].Value = tiempoLlegada_;
             //Nodo
             INodeObject union = model.Facility.IntelligentObjects.CreateObject("BasicNode", new FacilityLocation(longitud_ - 3, 0, latitud_)) as INodeObject;
@@ -252,9 +251,9 @@ namespace _MYS1_Practica3_P26
 
         public void crearAeropuertos()
         {
-            crearAeropuerto(1, "70", "Math.Round(Random.Exponential(35))", "0.50", "0.50");
-            crearAeropuerto(8, "40", "Math.Round(Random.Exponential(50))", "0.30", "0.70");
-            crearAeropuerto(7, "30", "Math.Round(Random.Exponential(70))", "0.40", "0.60");
+            crearAeropuerto(1, "70", "Random.Exponential(35)", "0.50", "0.50");
+            crearAeropuerto(8, "40", "Random.Exponential(50)", "0.30", "0.70");
+            crearAeropuerto(6, "30", "Random.Exponential(70)", "0.40", "0.60");
         }
 
         public void crearAeropuerto(int region, string cantidadLlegada, string tiempoLlegada, string probMarcharse, string probQuedarse)
@@ -266,8 +265,8 @@ namespace _MYS1_Practica3_P26
             switch (region)
             {
                 case 1://metropolitana
-                    nombreEntrada = nombreEntrada + "METROPOLITANA";
-                    nombreSalida = nombreSalida + "METROPOLITANA";
+                    nombreEntrada = nombreEntrada + "INTERNACIONALLAAURORA";
+                    nombreSalida = nombreSalida + "INTERNACIONALLAAURORA";
                     union = union + "METROPOLITANA";
                     regreso = regreso + "METROPOLITANA";
                     path = path + "METROPOLITANA";
@@ -309,8 +308,8 @@ namespace _MYS1_Practica3_P26
                     latitud_ = 20;
                     break;
                 case 6://suroccidente
-                    nombreEntrada = nombreEntrada + "SUROCCIDENTE";
-                    nombreSalida = nombreSalida + "SUROCCIDENTE";
+                    nombreEntrada = nombreEntrada + "INTERNACIONALQUETZALTENANGO";
+                    nombreSalida = nombreSalida + "INTERNACIONALQUETZALTENANGO";
                     union = union + "SUROCCIDENTE";
                     regreso = regreso + "SUROCCIDENTE";
                     path = path + "SUROCCIDENTE";
@@ -327,8 +326,8 @@ namespace _MYS1_Practica3_P26
                     latitud_ = -20;
                     break;
                 case 8://peten
-                    nombreEntrada = nombreEntrada + "PETEN";
-                    nombreSalida = nombreSalida + "PETEN";
+                    nombreEntrada = nombreEntrada + "INTERNACIONALMUNDOMAYA";
+                    nombreSalida = nombreSalida + "INTERNACIONALMUNDOMAYA";
                     union = union + "PETEN";
                     regreso = regreso + "PETEN";
                     path = path + "PETEN";
@@ -341,16 +340,17 @@ namespace _MYS1_Practica3_P26
             entrada.ObjectName = nombreEntrada;
             entrada.Properties["InterarrivalTime"].Value = tiempoLlegada;
             entrada.Properties["EntitiesPerArrival"].Value = cantidadLlegada;
-            //union de entrada de aeropuerto hacia nodo de union 
-            intelligentObjects.CreateLink("Path", ((IFixedObject)model.Facility.IntelligentObjects[nombreEntrada]).Nodes[0], ((INodeObject)model.Facility.IntelligentObjects[union]), null);
-            ContadorPathSimple++;
+            model.Facility.IntelligentObjects[nombreEntrada].Properties["EntityType"].Value = "Turista1";
             //salida de turistas por aeropuerto
             IFixedObject salida = model.Facility.IntelligentObjects.CreateObject("Sink", new FacilityLocation(longitud_ - 6, 0, latitud_ - 4)) as IFixedObject;
             salida.ObjectName = nombreSalida;
             //union de entrada de aeropuerto hacia nodo de union 
-            intelligentObjects.CreateLink("Path", (INodeObject)model.Facility.IntelligentObjects[regreso], salida.Nodes[0], null);
-            model.Facility.IntelligentObjects["Path" + ContadorPathSimple].Properties["SelectionWeight"].Value = probMarcharse;
+            intelligentObjects.CreateLink("Path", ((IFixedObject)model.Facility.IntelligentObjects[nombreEntrada]).Nodes[0], ((INodeObject)model.Facility.IntelligentObjects[union]), null);
             ContadorPathSimple++;
+            //union de entrada de aeropuerto hacia nodo de union 
+            intelligentObjects.CreateLink("Path", (INodeObject)model.Facility.IntelligentObjects[regreso], salida.Nodes[0], null);
+            ContadorPathSimple++;
+            model.Facility.IntelligentObjects["Path" + ContadorPathSimple].Properties["SelectionWeight"].Value = probMarcharse;
             model.Facility.IntelligentObjects[path].Properties["SelectionWeight"].Value = probQuedarse;
 
         }
@@ -369,15 +369,16 @@ namespace _MYS1_Practica3_P26
             dibujar5(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
             dibujar0(iniciox, inicioy, espacio);
-            /*iniciox = iniciox + (5 * espacio);
+            iniciox = iniciox + (5 * espacio);
             dibujar3(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
             dibujar9(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
             dibujar1(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
-            dibujar0(iniciox, inicioy, espacio);*/
+            dibujar0(iniciox, inicioy, espacio);
 
+            //inicio nuevo carnet
             iniciox = iniciox - (20 * espacio);
             inicioy = inicioy + (5 * espacio) + 8;
 
@@ -391,15 +392,14 @@ namespace _MYS1_Practica3_P26
             dibujar3(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
             dibujar1(iniciox, inicioy, espacio);
-            /*iniciox = iniciox + (5 * espacio);
+            iniciox = iniciox + (5 * espacio);
             dibujar4(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
             dibujar8(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
             dibujar2(iniciox, inicioy, espacio);
             iniciox = iniciox + (5 * espacio);
-            dibujar1(iniciox, inicioy, espacio);*/
-
+            dibujar1(iniciox, inicioy, espacio);
         }
 
         public void dibujar0(int iniciox, int inicioy, int espacio)
@@ -552,6 +552,52 @@ namespace _MYS1_Practica3_P26
             ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
             ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
             ILinkObject u4 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n0, null) as ILinkObject;
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult res = MessageBox.Show("¿Desea cerrar?", "Cerrar", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if(res == DialogResult.Cancel) { e.Cancel = true; }
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
         }
 
         public void pintarMapa()
@@ -906,9 +952,27 @@ namespace _MYS1_Practica3_P26
             base_militar.ObjectName = "BaseMilitar";
             base_militar.Properties["InterarrivalTime"].Value = "15";
             base_militar.Properties["MaximumArrivals"].Value = "15";
-
+            model.Facility.IntelligentObjects["BaseMilitar"].Properties["EntityType"].Value = "Avion1";
+        }
+        
+        public void crearPuntosCardinales()
+        {
+            crearPuntoCardinal(0,-100, "Norte");
+            crearPuntoCardinal(0, 70, "Sur");
+            crearPuntoCardinal(-90, 0, "Oeste");
+            crearPuntoCardinal(90, 0, "Este");
         }
 
+        public void crearPuntoCardinal(int longitud_, int latitud_, string nombre)
+        {
+            INodeObject punto = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(longitud_, 0, latitud_)) as INodeObject;
+            punto.ObjectName = nombre;
+        }
 
+        public void generarEntidades()
+        {
+            IEntityRuntimeData turista = model.Facility.IntelligentObjects.CreateObject("Turista", new FacilityLocation(-100, 0,0)) as IEntityRuntimeData;
+            IEntityRuntimeData avion = model.Facility.IntelligentObjects.CreateObject("Avion", new FacilityLocation(-100, 0, 25)) as IEntityRuntimeData;
+        }
     }
 }
