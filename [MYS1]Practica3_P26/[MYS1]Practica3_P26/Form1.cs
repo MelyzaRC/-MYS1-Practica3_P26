@@ -29,17 +29,24 @@ namespace _MYS1_Practica3_P26
     public partial class Form1 : Form
     {
         static ISimioProject _ProyectoSimio;
+        static ISimioProject _ProyectoSimioDatos;
         String _rutaproyecto = "[MYS1]ModeloBase_P26.spfx";
         int ContadorPathSimple = 1;
         String[] warnings;
         IModel model;
         IIntelligentObjects intelligentObjects;
+        IModel modelDatos;
+        IIntelligentObjects intelligentObjectsDatos;
 
         public Form1()
         {
             _ProyectoSimio = SimioProjectFactory.LoadProject(_rutaproyecto, out warnings);
             model = _ProyectoSimio.Models[1];
             intelligentObjects = model.Facility.IntelligentObjects;
+
+            _ProyectoSimioDatos = SimioProjectFactory.LoadProject(_rutaproyecto, out warnings);
+            modelDatos = _ProyectoSimioDatos.Models[1];
+            intelligentObjectsDatos = modelDatos.Facility.IntelligentObjects;
             InitializeComponent();
         }
 
@@ -52,18 +59,18 @@ namespace _MYS1_Practica3_P26
         {
             try
             {
-                //generarEntidades();
+                pintarMapa();
+                crearPuntosCardinales();
                 crearRegiones();
                 crearEnlaces();
                 crearAeropuertos();
-                pintarMapa();
-                crearPuntosCardinales();
-                //dibujarCarnets();
+                dibujarCarnets();
 
                 try
                 {
-                    SimioProjectFactory.SaveProject(_ProyectoSimio, "[MYS1]ModeloFinal.spfx", out warnings);
-                    //System.Diagnostics.Process.Start("ModeloModificado.spfx");
+                    SimioProjectFactory.SaveProject(_ProyectoSimio, "[MYS1]ModeloFinal_P26.spfx", out warnings);
+                    SimioProjectFactory.SaveProject(_ProyectoSimioDatos, "[MYS1]ModeloFinalDatos_P26.spfx", out warnings);
+                    
                     MessageBox.Show("Modelo generado exitosamente!", "RESULTADO", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception er)
@@ -355,9 +362,161 @@ namespace _MYS1_Practica3_P26
 
         }
 
+        public void dibujar0(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n3, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n3, n2, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n0, null) as ILinkObject;
+
+        }
+
+        public void dibujar1(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+
+        }
+
+        public void dibujar2(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n4 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
+            INodeObject n5 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n3, n4, null) as ILinkObject;
+            ILinkObject u4 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n4, n5, null) as ILinkObject;
+        }
+
+        public void dibujar3(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n4 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
+            INodeObject n5 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
+            ILinkObject u4 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n5, n4, null) as ILinkObject;
+
+        }
+
+        public void dibujar4(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n0, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
+
+        }
+
+        public void dibujar5(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n4 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
+            INodeObject n5 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n3, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n3, n2, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
+            ILinkObject u4 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n5, n4, null) as ILinkObject;
+        }
+
+        public void dibujar6(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n4 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
+            INodeObject n5 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n3, n4, null) as ILinkObject;
+            ILinkObject u4 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n4, n5, null) as ILinkObject;
+            ILinkObject u5 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
+        }
+
+        public void dibujar7(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (1 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n4 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n4, null) as ILinkObject;
+        }
+
+        public void dibujar8(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n4 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
+            INodeObject n5 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n3, n4, null) as ILinkObject;
+            ILinkObject u4 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n4, n5, null) as ILinkObject;
+            ILinkObject u5 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n5, n2, null) as ILinkObject;
+            ILinkObject u6 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n3, n0, null) as ILinkObject;
+        }
+
+        public void dibujar9(int iniciox, int inicioy, int espacio)
+        {
+            INodeObject n0 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
+            INodeObject n1 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
+            INodeObject n2 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n3 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
+            INodeObject n5 = modelDatos.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
+
+            ILinkObject u0 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
+            ILinkObject u1 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
+            ILinkObject u2 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
+            ILinkObject u3 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
+            ILinkObject u4 = modelDatos.Facility.IntelligentObjects.CreateLink("Path", n3, n0, null) as ILinkObject;
+        }
+
         public void dibujarCarnets()
         {
-            int iniciox = 50, inicioy = -10, espacio = 5;
+            int iniciox = 0, inicioy = 0, espacio = 5;
 
             //201503910
             dibujar2(iniciox, inicioy, espacio);
@@ -379,8 +538,8 @@ namespace _MYS1_Practica3_P26
             dibujar0(iniciox, inicioy, espacio);
 
             //inicio nuevo carnet
-            iniciox = iniciox - (20 * espacio);
-            inicioy = inicioy + (5 * espacio) + 8;
+            iniciox = iniciox - (40 * espacio);
+            inicioy = inicioy + (5 * espacio) + 10;
 
             //201314821
             dibujar2(iniciox, inicioy, espacio);
@@ -401,159 +560,7 @@ namespace _MYS1_Practica3_P26
             iniciox = iniciox + (5 * espacio);
             dibujar1(iniciox, inicioy, espacio);
         }
-
-        public void dibujar0(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n3, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n2, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n0, null) as ILinkObject;
-
-        }
-
-        public void dibujar1(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-
-        }
-
-        public void dibujar2(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n4 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
-            INodeObject n5 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n4, null) as ILinkObject;
-            ILinkObject u4 = model.Facility.IntelligentObjects.CreateLink("Path", n4, n5, null) as ILinkObject;
-        }
-
-        public void dibujar3(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n4 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
-            INodeObject n5 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
-            ILinkObject u4 = model.Facility.IntelligentObjects.CreateLink("Path", n5, n4, null) as ILinkObject;
-
-        }
-
-        public void dibujar4(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n0, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
-
-        }
-
-        public void dibujar5(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n4 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
-            INodeObject n5 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n3, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n2, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
-            ILinkObject u4 = model.Facility.IntelligentObjects.CreateLink("Path", n5, n4, null) as ILinkObject;
-        }
-
-        public void dibujar6(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n4 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
-            INodeObject n5 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n4, null) as ILinkObject;
-            ILinkObject u4 = model.Facility.IntelligentObjects.CreateLink("Path", n4, n5, null) as ILinkObject;
-            ILinkObject u5 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
-        }
-
-        public void dibujar7(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (1 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n4 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n4, null) as ILinkObject;
-        }
-
-        public void dibujar8(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n4 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (4 * espacio))) as INodeObject;
-            INodeObject n5 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n4, null) as ILinkObject;
-            ILinkObject u4 = model.Facility.IntelligentObjects.CreateLink("Path", n4, n5, null) as ILinkObject;
-            ILinkObject u5 = model.Facility.IntelligentObjects.CreateLink("Path", n5, n2, null) as ILinkObject;
-            ILinkObject u6 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n0, null) as ILinkObject;
-        }
-
-        public void dibujar9(int iniciox, int inicioy, int espacio)
-        {
-            INodeObject n0 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy)) as INodeObject;
-            INodeObject n1 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy)) as INodeObject;
-            INodeObject n2 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n3 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox, 0, inicioy + (2 * espacio))) as INodeObject;
-            INodeObject n5 = model.Facility.IntelligentObjects.CreateObject("TransferNode", new FacilityLocation(iniciox + (2 * espacio), 0, inicioy + (4 * espacio))) as INodeObject;
-
-            ILinkObject u0 = model.Facility.IntelligentObjects.CreateLink("Path", n0, n1, null) as ILinkObject;
-            ILinkObject u1 = model.Facility.IntelligentObjects.CreateLink("Path", n1, n2, null) as ILinkObject;
-            ILinkObject u2 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n3, null) as ILinkObject;
-            ILinkObject u3 = model.Facility.IntelligentObjects.CreateLink("Path", n2, n5, null) as ILinkObject;
-            ILinkObject u4 = model.Facility.IntelligentObjects.CreateLink("Path", n3, n0, null) as ILinkObject;
-        }
-
+       
         private void label4_Click(object sender, EventArgs e)
         {
 
