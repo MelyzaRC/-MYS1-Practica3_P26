@@ -957,7 +957,7 @@ namespace _MYS1_Practica3_P26
             IFixedObject base_militar = model.Facility.IntelligentObjects.CreateObject("Source", new FacilityLocation(0, 0, -70)) as IFixedObject;
             ILinkObject u43 = model.Facility.IntelligentObjects.CreateLink("Path", base_militar.Nodes[0], p14, null) as ILinkObject;
             base_militar.ObjectName = "BaseMilitar";
-            base_militar.Properties["InterarrivalTime"].Value = "15";
+            base_militar.Properties["InterarrivalTime"].Value = "Random.Exponential(15)";
             base_militar.Properties["MaximumArrivals"].Value = "15";
             model.Facility.IntelligentObjects["BaseMilitar"].Properties["EntityType"].Value = "Avion1";
         }
