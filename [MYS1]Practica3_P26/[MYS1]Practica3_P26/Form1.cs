@@ -106,7 +106,7 @@ namespace _MYS1_Practica3_P26
             IFixedObject estacion = model.Facility.IntelligentObjects.CreateObject("Server", new FacilityLocation(longitud_, 0, latitud_)) as IFixedObject;
             estacion.ObjectName = "region" + nombre.ToUpper();
             model.Facility.IntelligentObjects["region" + nombre.ToUpper()].Properties["ProcessingTime"].Value = tiempoAtencion_;
-            model.Facility.IntelligentObjects["region" + nombre.ToUpper()].Properties["InputBufferCapacity"].Value = capacidad_;
+            model.Facility.IntelligentObjects["region" + nombre.ToUpper()].Properties["InitialCapacity"].Value = capacidad_;
             model.Facility.IntelligentObjects["output@region" + nombre.ToUpper()].Properties["OutboundLinkRule"].Value = "ByLinkWeight";
             //Source que genera turistas 
             IFixedObject turistas = model.Facility.IntelligentObjects.CreateObject("Source", new FacilityLocation(longitud_ - 6, 0, latitud_)) as IFixedObject;
